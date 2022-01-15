@@ -1,7 +1,16 @@
-import logging
+"""
+	Binance Api wrapper class
+
+Usage:
+	client = Client(<api_key>, <secret_key>)
+	client.get_account_info()
+"""
+
+
 from binance.spot import Spot
 from binance.lib.utils import config_logging
 from binance.error import ClientError
+import logging
 
 
 class Client:
@@ -10,6 +19,7 @@ class Client:
 
 
 	# weight: 10
+	# /api/v3/account
 	def get_account_info(self):
 		try:
 			res = self.client.account()
@@ -19,7 +29,8 @@ class Client:
 
 
 	# weight: 1
-	# need to add other time_in_force options(like FOK, IOC, ...)?
+	# /api/v3/order
+	# TODO: need to add other time_in_force options(like FOK, IOC, ...)?
 	def open_order(self, symbol: str, side: str, type: str, quantity: float, price: float):
 		params = {
 			"timeInForce": "GTC",
@@ -35,6 +46,7 @@ class Client:
 
 
 	# weight: 3 per symbol
+	# /api/v3/openOrders
 	def get_all_open_orders(self, symbol: str):
 		try:
 			res = self.client.get_open_orders(symbol)
@@ -44,6 +56,8 @@ class Client:
 
 
 	# weight: 1
+	# /api/v3/order
+	# /api/v3/openOrders
 	def cancel_order(self, symbol: str, order_id: int):
 		try:
 			if order_id > 0:
